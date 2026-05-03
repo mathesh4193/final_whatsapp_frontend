@@ -1,24 +1,60 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import HomeScreen from "./components/HomePage";
+import UserDetails from "./components/UserDetails";
+import StatusPage from "./pages/StatusSection/StatusPage";
+import Login from "./pages/user-login/Login";
+import { ProtectedRoute, PublicRoute } from './Protected';
+import Settings from "./pages/SettingSection/Settings";
+import { useChatStore } from './store/chatStore';
+import userStore from './store/useUserStore';
+import { disconnectSocket, initializeSocket } from './services/chat.service';
 
 function App() {
+  const { setCurrentUser, initSocketListeners, cleanup } = useChatStore()
+  const { user } = userStore()
+
+  useEffect(() => {
+    // Initialize socket when user is logged in
+    if (user?._id) {
+      const socket = initializeSocket()
+
+      if (socket) {
+        // Set current user in chat store
+        setCurrentUser(user)
+
+        // Initialize socket listeners
+        initSocketListeners()
+      }
+    }
+
+    // Cleanup on unmount
+    return () => {
+      cleanup()
+      disconnectSocket()
+    }
+  }, [user, setCurrentUser, initSocketListeners, cleanup])
+ 
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <ToastContainer position="top-right" autoClose={3000} />
+      <Router>
+        <Routes>
+          <Route element={<PublicRoute />}>
+            <Route path="/user-login" element={<Login />} />
+          </Route>
+          
+          <Route element={<ProtectedRoute />}>
+            <Route path="/" element={<HomeScreen />} />
+            <Route path="/user-details" element={<UserDetails />} />
+            <Route path="/status" element={<StatusPage />} />
+            <Route path="/setting" element={<Settings />} />
+          </Route>
+        </Routes>
+      </Router>
+    </>
   );
 }
 
