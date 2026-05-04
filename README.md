@@ -1,70 +1,72 @@
-# Getting Started with Create React App
+# 📱 WhatsApp Clone – MERN Stack
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A professional, real-time messaging application that enables users to chat, share status updates, and perform video calls.  
+This project is built using the MERN stack (MongoDB, Express.js, React.js, Node.js).
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+##  Features
 
-### `npm start`
+-  Real-time messaging with delivery status and unread counts  
+-  Status updates (text, images, videos – expire after 24 hours)  
+-  User profile management  
+-  Video calling using WebRTC  
+-  Secure authentication using OTP and JWT  
+-  Light/Dark theme support  
+-  Fully responsive (mobile + desktop)  
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+---
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+##  Technology Stack
 
-### `npm test`
+###  Backend
+The backend is built using **Node.js** and **Express.js**.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- **Database:** MongoDB (via Mongoose)  
+- **Real-time Communication:** Socket.IO  
+- **Media Storage:** Cloudinary  
+- **Authentication:** JSON Web Tokens (JWT)  
+- **Services:**
+  - Twilio (OTP verification)
+  - Nodemailer (email notifications)
 
-### `npm run build`
+---
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+###  Frontend
+The frontend is built using **React.js**.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- **State Management:** Zustand  
+- **Styling:** Tailwind CSS + DaisyUI  
+- **Real-time Updates:** Socket.io-client  
+- **Animations:** Framer Motion  
+- **API Communication:** Axios  
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+---
 
-### `npm run eject`
+##  Environment Variables Setup
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Create `.env` files in both **backend** and **frontend** directories.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+---
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+###  Backend Configuration (`backend/.env`)
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```env
+PORT=5001
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_secret_key
+CLIENT_URL=http://localhost:3000
 
-## Learn More
+# Cloudinary
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+# Email
+EMAIL_USER=your_email
+EMAIL_PASS=your_app_password
 
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+# Twilio
+TWILIO_ACCOUNT_SID=your_twilio_sid
+TWILIO_AUTH_TOKEN=your_twilio_auth_token
+TWILIO_SERVICE_SID=your_twilio_verify_service_sid

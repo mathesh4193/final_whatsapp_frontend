@@ -273,7 +273,7 @@ const VideoCallModal = ({ socket }) => {
 
     // Call accepted - start caller flow
     const handleCallAccepted = ({ receiverName }) => {
-      console.log("✅ CALLER: Call accepted by", receiverName)
+      console.log(" CALLER: Call accepted by", receiverName)
       if (currentCall) {
         // Small delay to ensure receiver is ready
         setTimeout(() => {

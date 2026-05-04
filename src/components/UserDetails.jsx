@@ -67,10 +67,10 @@ export default function UserDetails() {
   const handleEmojiSelect = (emoji, field) => {
     if (field === "name") {
       setName((prev) => prev + emoji.emoji);
-      setShowNameEmoji(false); // ✅ Auto close after select
+      setShowNameEmoji(false); //  Auto close after select
     } else {
       setAbout((prev) => prev + emoji.emoji);
-      setShowAboutEmoji(false); // ✅ Auto close after select
+      setShowAboutEmoji(false); //  Auto close after select
     }
   };
 
@@ -184,7 +184,7 @@ export default function UserDetails() {
                     <button
                       onClick={() => {
                         setIsEditingName(false);
-                        setShowNameEmoji(false); // ✅ Auto close emoji picker
+                        setShowNameEmoji(false); //  Auto close emoji picker
                       }}
                       className="ml-2 focus:outline-none"
                     >
@@ -252,7 +252,7 @@ export default function UserDetails() {
                     <button
                       onClick={() => {
                         setIsEditingAbout(false);
-                        setShowAboutEmoji(false); // ✅ Auto close emoji picker
+                        setShowAboutEmoji(false); //  Auto close emoji picker
                       }}
                       className="ml-2 focus:outline-none"
                     >

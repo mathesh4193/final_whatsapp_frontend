@@ -12,7 +12,7 @@ const ChatList = ({ contacts }) => {
   const { theme } = useThemeStore();
     const { user } = userStore();
   const [searchTerm, setSearchTerm] = useState("");
-  // ✅ Ensure contacts is always an array
+  //  Ensure contacts is always an array
   const safeContacts = Array.isArray(contacts) ? contacts : [];
 
   // Filter contacts based on the search term

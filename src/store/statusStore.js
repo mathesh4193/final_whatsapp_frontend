@@ -78,7 +78,7 @@ const useStatusStore = create((set, get) => ({
     try {
       const formData = new FormData();
 
-      // ✅ FIXED: Use "file" instead of "media" to match backend
+      //  FIXED: Use "file" instead of "media" to match backend
       if (statusData.file) {
         formData.append("media", statusData.file);
       }
@@ -154,11 +154,11 @@ const useStatusStore = create((set, get) => ({
   // Helper functions for grouped statuses
   getGroupedStatuses: (userId) => {
     const { statuses } = get();
-    // ✅ Ensure statuses is always an array before calling reduce
+    //  Ensure statuses is always an array before calling reduce
     const safeStatuses = Array.isArray(statuses) ? statuses : [];
     
     return safeStatuses.reduce((acc, status) => {
-      // ✅ Handle case where user is just an ID (not populated)
+      //  Handle case where user is just an ID (not populated)
       if (!status?.user) return acc;
       
       const userObj = typeof status.user === 'object' ? status.user : { _id: status.user };
