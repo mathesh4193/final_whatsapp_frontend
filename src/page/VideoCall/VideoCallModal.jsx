@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useMemo } from "react"
+import { useEffect, useRef, useMemo, useCallback } from "react"
 import { FaVideo, FaVideoSlash, FaMicrophone, FaMicrophoneSlash, FaPhoneSlash, FaTimes } from "react-icons/fa"
 import useVideoCallStore from "../../store/videoCallStore"
 import useUserStore from "../../store/useUserStore"
@@ -90,7 +90,7 @@ const VideoCallModal = ({ socket }) => {
   }, [remoteStream])
 
   // Initialize media stream
-  const initializeMedia = async (video = true) => {
+  const initializeMedia = useCallback(async (video = true) => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: video ? { width: 640, height: 480 } : false,
@@ -107,10 +107,10 @@ const VideoCallModal = ({ socket }) => {
       console.error(" Media error:", error)
       throw error
     }
-  }
+  }, [setLocalStream])
 
   // Create peer connection
-  const createPeerConnection = (stream, role) => {
+  const createPeerConnection = useCallback((stream, role) => {
     const pc = new RTCPeerConnection(rtcConfiguration)
 
     // Add local tracks immediately
@@ -169,10 +169,10 @@ const VideoCallModal = ({ socket }) => {
 
     setPeerConnection(pc)
     return pc
-  }
+  }, [socket, currentCall, incomingCall, setRemoteStream, setCallStatus, setPeerConnection])
 
   // CALLER: Initialize call after acceptance
-  const initializeCallerCall = async () => {
+  const initializeCallerCall = useCallback(async () => {
     try {
       setCallStatus("connecting")
 
@@ -202,7 +202,7 @@ const VideoCallModal = ({ socket }) => {
       setCallStatus("failed")
       setTimeout(handleEndCall, 2000)
     }
-  }
+  }, [callType, currentCall, socket, setCallStatus])
 
   // RECEIVER: Answer call
   const handleAnswerCall = async () => {
@@ -253,7 +253,7 @@ const VideoCallModal = ({ socket }) => {
   }
 
   // Handle end call
-  const handleEndCall = () => {
+  const handleEndCall = useCallback(() => {
     const participantId = currentCall?.participantId || incomingCall?.callerId
     const callId = currentCall?.callId || incomingCall?.callId
 
@@ -264,7 +264,7 @@ const VideoCallModal = ({ socket }) => {
       })
     }
     endCall()
-  }
+  }, [socket, currentCall, incomingCall, endCall])
 
   // Socket event listeners - FIXED
   useEffect(() => {
@@ -403,7 +403,7 @@ const VideoCallModal = ({ socket }) => {
       socket.off("webrtc_answer", handleWebRTCAnswer)
       socket.off("webrtc_ice_candidate", handleWebRTCIceCandidate)
     }
-  }, [socket, peerConnection, currentCall, incomingCall, user.username, user.profilePicture])
+  }, [socket, peerConnection, currentCall, incomingCall, user.username, user.profilePicture, addIceCandidate, endCall, initializeCallerCall, processQueuedIceCandidates, setCallStatus])
 
   // Don't render if modal should not be open
   if (!isCallModalOpen && !incomingCall) {

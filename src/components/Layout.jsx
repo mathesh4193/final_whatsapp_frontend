@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "./Sidebar";
-import ChatWindow from "../pages/chatSection/ChatWindow";
+import ChatWindow from "../page/ChatSection/ChatWindow";
 import useStore from "../store/layoutStore";
 import useThemeStore from "../store/themeStore";
 import { useLocation } from "react-router-dom";
@@ -19,7 +19,11 @@ export default function Layout({
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const { theme, setTheme } = useThemeStore();
 
-  const isUserDetailsPage = location.pathname === "/user-details";
+  const isUserDetailsPage = location.pathname.includes("/user-details");
+  const isStatusPage = location.pathname.includes("/status");
+  const isSettingPage = location.pathname.includes("/setting");
+  const isChatPage = location.pathname === "/";
+
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
@@ -39,7 +43,7 @@ export default function Layout({
         className={`flex-1 flex overflow-hidden ${isMobile ? "flex-col" : ""}`}
       >
         <AnimatePresence initial={false}>
-          {(!selectedContact || !isMobile) && (
+          {(!selectedContact || !isMobile || isStatusPage || isUserDetailsPage || isSettingPage) && (
             <motion.div
               key="chatList"
               initial={{ x: isMobile ? "-100%" : 0 }}
@@ -47,13 +51,13 @@ export default function Layout({
               exit={{ x: "-100%" }}
               transition={{ type: "tween" }}
               className={`${
-                isUserDetailsPage ? "w-full md:w-2/5" : "w-full md:w-2/5"
+                isUserDetailsPage || isStatusPage || isSettingPage ? "w-full" : "w-full md:w-2/5"
               } h-full ${isMobile ? "pb-16" : ""}`}
             >
               {children}
             </motion.div>
           )}
-          {(selectedContact || !isMobile) && (
+          {(selectedContact || !isMobile) && isChatPage && !isStatusPage && !isUserDetailsPage && !isSettingPage && (
             <motion.div
               key="chatWindow"
               initial={{ x: isMobile ? "100%" : 0 }}

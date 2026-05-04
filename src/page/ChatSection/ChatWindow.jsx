@@ -43,7 +43,6 @@ export default function ChatWindow({ selectedContact, setSelectedContact }) {
   const socket = getSocket();
   const {
     messages,
-    loading,
     sendMessage,
     startTyping,
     stopTyping,
@@ -56,7 +55,7 @@ export default function ChatWindow({ selectedContact, setSelectedContact }) {
     addReaction,
     deleteMessage,
   } = useChatStore();
-  const { initiateCall } = useVideoCallStore();
+  // const { initiateCall } = useVideoCallStore();
 
   // Get online status and last seen
   const online = isUserOnline(selectedContact?._id);
@@ -64,21 +63,24 @@ export default function ChatWindow({ selectedContact, setSelectedContact }) {
   const isTyping = isUserTyping(selectedContact?._id);
 
   useEffect(() => {
-    if (selectedContact?._id && conversations?.data?.length > 0) {
-      const conversation = conversations.data.find((conv) =>
+    if (selectedContact?._id) {
+      const conversation = conversations?.data?.find((conv) =>
         conv.participants.some(
           (participant) => participant._id === selectedContact._id
         )
       );
       if (conversation?._id) {
         fetchMessages(conversation._id);
+      } else {
+        // Clear messages if no conversation exists for the selected contact
+        useChatStore.setState({ messages: [], currentConversation: null });
       }
     }
-  }, [selectedContact, conversations]);
+  }, [selectedContact, conversations, fetchMessages]);
 
   useEffect(() => {
     fetchConversations();
-  }, []);
+  }, [fetchConversations]);
 
   // Fetch messages when selected contact changes
   // useEffect(() => {
@@ -360,10 +362,25 @@ export default function ChatWindow({ selectedContact, setSelectedContact }) {
             <React.Fragment key={date}>
               {renderDateSeparator(new Date(date))}
               {msgs
-                .filter(
-                  (msg) =>
-                    msg.conversation === selectedContact?.conversation?._id
-                )
+                .filter((msg) => {
+                  const msgConvoId = msg.conversation?._id || msg.conversation;
+                  const selectedConvoId = selectedContact?.conversation?._id;
+
+                  if (selectedConvoId && msgConvoId === selectedConvoId) {
+                    return true;
+                  }
+
+                  // Fallback for new chats or if IDs don't match for some reason
+                  const senderId = msg.sender?._id || msg.sender;
+                  const receiverId = msg.receiver?._id || msg.receiver;
+                  const userId = user?._id;
+                  const contactId = selectedContact?._id;
+
+                  return (
+                    (senderId === userId && receiverId === contactId) ||
+                    (senderId === contactId && receiverId === userId)
+                  );
+                })
                 .map((msg) => (
                   <MessageBubble
                     key={msg._id || msg.tempId}

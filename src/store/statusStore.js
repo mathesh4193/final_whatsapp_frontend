@@ -23,24 +23,27 @@ const useStatusStore = create((set, get) => ({
     // Real-time event listeners
     socket.on("new_status", (newStatus) => {
       console.log("Received new_status:", newStatus);
-      set((state) => ({
-        statuses: state.statuses.some((s) => s._id === newStatus._id)
-          ? state.statuses
-          : [newStatus, ...state.statuses],
-      }));
+      set((state) => {
+        const safeStatuses = Array.isArray(state.statuses) ? state.statuses : [];
+        return {
+          statuses: safeStatuses.some((s) => s._id === newStatus._id)
+            ? safeStatuses
+            : [newStatus, ...safeStatuses],
+        };
+      });
     });
 
     socket.on("status_deleted", (statusId) => {
       console.log("Received status_deleted:", statusId);
       set((state) => ({
-        statuses: state.statuses.filter((s) => s._id !== statusId),
+        statuses: (Array.isArray(state.statuses) ? state.statuses : []).filter((s) => s._id !== statusId),
       }));
     });
 
     socket.on("status_viewed", ({ statusId, viewers }) => {
       console.log("Received status_viewed:", { statusId, viewers });
       set((state) => ({
-        statuses: state.statuses.map((status) =>
+        statuses: (Array.isArray(state.statuses) ? state.statuses : []).map((status) =>
           status._id === statusId ? { ...status, viewers } : status
         ),
       }));
@@ -89,12 +92,15 @@ const useStatusStore = create((set, get) => ({
 
       // Add to local state immediately for instant update
       if (data.data) {
-        set((state) => ({
-          statuses: state.statuses.some((s) => s._id === data.data._id)
-            ? state.statuses
-            : [data.data, ...state.statuses],
-          loading: false,
-        }));
+        set((state) => {
+          const safeStatuses = Array.isArray(state.statuses) ? state.statuses : [];
+          return {
+            statuses: safeStatuses.some((s) => s._id === data.data._id)
+              ? safeStatuses
+              : [data.data, ...safeStatuses],
+            loading: false,
+          };
+        });
       }
 
       return data.data;
@@ -123,7 +129,7 @@ const useStatusStore = create((set, get) => ({
 
       // Remove from local state immediately
       set((state) => ({
-        statuses: state.statuses.filter((s) => s._id !== statusId),
+        statuses: (Array.isArray(state.statuses) ? state.statuses : []).filter((s) => s._id !== statusId),
       }));
     } catch (error) {
       console.error("Error deleting status:", error);
@@ -148,13 +154,23 @@ const useStatusStore = create((set, get) => ({
   // Helper functions for grouped statuses
   getGroupedStatuses: (userId) => {
     const { statuses } = get();
-    return statuses.reduce((acc, status) => {
-      const statusUserId = status.user._id;
+    // ✅ Ensure statuses is always an array before calling reduce
+    const safeStatuses = Array.isArray(statuses) ? statuses : [];
+    
+    return safeStatuses.reduce((acc, status) => {
+      // ✅ Handle case where user is just an ID (not populated)
+      if (!status?.user) return acc;
+      
+      const userObj = typeof status.user === 'object' ? status.user : { _id: status.user };
+      const statusUserId = userObj._id;
+      
+      if (!statusUserId) return acc;
+      
       if (!acc[statusUserId]) {
         acc[statusUserId] = {
           id: statusUserId,
-          name: status.user.username,
-          avatar: status?.user?.profilePicture,
+          name: userObj.username || "Unknown User",
+          avatar: userObj.profilePicture,
           statuses: [],
         };
       }
@@ -163,7 +179,7 @@ const useStatusStore = create((set, get) => ({
         media: status.content,
         contentType: status.contentType,
         timestamp: status.createdAt,
-        viewers: status.viewers,
+        viewers: status.viewers || [],
       });
       return acc;
     }, {});

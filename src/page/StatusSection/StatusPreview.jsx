@@ -30,7 +30,7 @@ useEffect(() => {
   }, 100)
 
   return () => clearInterval(interval) // Cleanup the interval when status changes or component unmounts
-}, [currentIndex])
+}, [currentIndex, onNext])
 
 
 
@@ -109,10 +109,12 @@ const handleDeleteStatus = () => {
           </div>
 
           {/* Status content */}
-          <div className="w-full h-full flex items-center justify-center">
+          <div className="w-full h-full flex items-center justify-center p-4">
             {currentStatus.contentType === "text" ? (
-              <div className="text-white text-center p-8">
-                <p className="text-2xl font-medium">{currentStatus.media}</p>
+              <div className="text-white text-center p-8 max-w-2xl bg-gradient-to-br from-purple-600 to-blue-500 rounded-3xl shadow-2xl min-h-[300px] flex items-center justify-center">
+                <p className="text-3xl font-bold leading-relaxed break-words">
+                  {currentStatus.media}
+                </p>
               </div>
             ) : currentStatus.contentType === "image" ? (
               <img

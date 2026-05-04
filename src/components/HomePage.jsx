@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import Layout from './Layout'
-import ChatList from '../pages/chatSection/ChatList'
+import ChatList from '../page/ChatSection/ChatList'
 import useStore from '../store/layoutStore'
 import { getAllUsers } from '../services/user.service'
 import { useChatStore } from '../store/chatStore'

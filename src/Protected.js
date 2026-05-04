@@ -17,7 +17,7 @@ export const ProtectedRoute = () => {
         const result = await checkUserAuth();
         
         if (result?.isAuthenticated) {
-          setUser(result?.user); // ✅ User is authenticated → update store with user info
+          setUser(result?.user); //  User is authenticated → update store with user info
         } else {
           clearUser(); // ❌ Not authenticated → clear user state
         }
@@ -25,7 +25,7 @@ export const ProtectedRoute = () => {
         console.error("Error checking authentication:", error);
         clearUser(); // On error, assume unauthenticated
       } finally {
-        setIsChecking(false); // ✅ Done checking → hide loader
+        setIsChecking(false); //  Done checking → hide loader
       }
     };
 
@@ -41,7 +41,7 @@ export const ProtectedRoute = () => {
     return <Navigate to="/user-login" state={{ from: location }} replace />;
   }
 
-  // ✅ User is authenticated → render protected route's children
+  //  User is authenticated → render protected route's children
   return <Outlet />;
 };
 
@@ -50,7 +50,7 @@ export const PublicRoute = () => {
   const isAuthenticated = userStore(state => state.isAuthenticated); // Get auth state from store
 
   if (isAuthenticated) {
-    // ✅ If user is already logged in → redirect away from public page (e.g., login or register)
+    //  If user is already logged in → redirect away from public page (e.g., login or register)
     return <Navigate to="/" replace />;
   }
 

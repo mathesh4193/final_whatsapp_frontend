@@ -21,6 +21,7 @@ export default function UserDetails() {
   const [showAboutEmoji, setShowAboutEmoji] = useState(false);
   const { user, setUser } = userStore();
   const { theme } = useThemeStore();
+  console.log(user);
 
   useEffect(() => {
     if (user) {
@@ -52,7 +53,9 @@ export default function UserDetails() {
       }
 
       const updated = await updateUserProfile(formData);
-      setUser(updated.data);
+      // Ensure we're accessing the correct data structure from the response
+      const updatedUser = updated.data || updated.user || updated;
+      setUser(updatedUser);
       setProfileImage(null);
       setPreview(null);
       toast.success("Profile updated");

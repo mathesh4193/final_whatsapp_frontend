@@ -4,20 +4,36 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import HomeScreen from "./components/HomePage";
 import UserDetails from "./components/UserDetails";
-import StatusPage from "./pages/StatusSection/StatusPage";
-import Login from "./pages/user-login/Login";
+import StatusPage from "./page/StatusSection/StatusPage";
+import Login from "./page/user-login/Login";
 import { ProtectedRoute, PublicRoute } from './Protected';
-import Settings from "./pages/SettingSection/Settings";
+import Settings from "./page/SettingSection/Settings";
 import { useChatStore } from './store/chatStore';
 import userStore from './store/useUserStore';
 import { disconnectSocket, initializeSocket } from './services/chat.service';
+import { checkUserAuth } from './services/user.service';
 
 function App() {
-  const { setCurrentUser, initSocketListeners, cleanup } = useChatStore()
-  const { user } = userStore()
+  const { setCurrentUser, initSocketListeners, fetchConversations, cleanup } = useChatStore()
+  const { user, setUser } = userStore()
 
   useEffect(() => {
-    // Initialize socket when user is logged in
+    const refreshUser = async () => {
+      try {
+        const result = await checkUserAuth();
+        if (result.isAuthenticated) {
+          setUser(result.user);
+        }
+      } catch (error) {
+        console.error("Failed to refresh user auth:", error);
+      }
+    };
+
+    refreshUser();
+  }, [setUser]);
+
+  useEffect(() => {
+    // Initialize socket and fetch data when user is logged in
     if (user?._id) {
       const socket = initializeSocket()
 
@@ -27,6 +43,9 @@ function App() {
 
         // Initialize socket listeners
         initSocketListeners()
+
+        // Fetch initial conversations
+        fetchConversations()
       }
     }
 
@@ -35,7 +54,7 @@ function App() {
       cleanup()
       disconnectSocket()
     }
-  }, [user, setCurrentUser, initSocketListeners, cleanup])
+  }, [user, setCurrentUser, initSocketListeners, fetchConversations, cleanup])
  
   return (
     <>
