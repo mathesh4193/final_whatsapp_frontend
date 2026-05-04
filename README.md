@@ -43,14 +43,26 @@ The frontend is built using **React.js**.
 
 ---
 
+##  Repository Structure
+
+This project is maintained in two separate repositories:
+
+- 🔗 Frontend: `<frontend-repo-link>`  
+- 🔗 Backend: `<backend-repo-link>` 
+
+
+
 ##  Environment Variables Setup
 
 Create `.env` files in both **backend** and **frontend** directories.
 
 ---
+###  Frontend Configuration (`frontend/.env`)
+```env
+REACT_APP_API_URL=http://localhost:8000
+```
 
 ###  Backend Configuration (`backend/.env`)
-
 ```env
 PORT=5001
 MONGO_URI=your_mongodb_connection_string
